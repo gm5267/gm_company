@@ -1,0 +1,65 @@
+server:
+  port: 8080
+
+
+spring:
+  application:
+    name: ace-backend
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+  jackson:
+    # Boot 4 默认 Jackson 3；实体一律用 Java 8 时间类型，避免时间戳歧义
+    default-property-inclusion: non_null
+  web:
+    resources:
+      add-mappings: false
+  # 本地 / 开发环境数据源（application.yml 自包含，确保 java -jar 即可运行）
+  # 生产环境请通过 --spring.profiles.active=prod 加载 application-prod.yml 覆盖
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://localhost:5432/postgres?currentSchema=gm_company&stringtype=unspecified"
+    username: postgres
+    password: 123456
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-init-sql: "SELECT 1"
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      # password: 生产环境必填
+      timeout: 5000ms
+
+jwt:
+  # 演示用密钥（HS256 需要 >= 256bit），生产环境改为环境变量注入
+  secret: "gm-ace-backend-secret-key-change-me-please-2026-09-01-abcdefghijklmn"
+  # 令牌有效期（秒）
+  expire-seconds: 7200
+  # 刷新令牌有效期（秒）
+  refresh-seconds: 604800
+
+mybatis-flex:
+  mapper-locations: classpath*:/mapper/*.xml
+  type-aliases-package: com.gm.ace.module
+  configuration:
+    map-underscore-to-camel-case: true
+  # 逻辑删除仅通过 @Column(isLogicDelete = true) 控制（避免给 sys_login_log 等无该列的表注入条件）
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

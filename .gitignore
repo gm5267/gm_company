@@ -1,0 +1,15 @@
+# Java 构建产物
+target/
+*.class
+
+# IDE
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+.vscode/
+
+# 操作系统
+Thumbs.db
+.DS_Store
